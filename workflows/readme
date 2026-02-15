@@ -2,3 +2,27 @@ de AI:
 https://github.com/yooper/php-text-analysis
 info over hoe de IA werkt:
 https://github.com/yooper/php-text-analysis/wiki
+composer 
+AI dowlauder https://getcomposer.org/download/ 
+
+------------------------------------------------------
+
+AI douwlaud:
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+
+-dan 
+
+php composer.phar require yooper/php-text-analysis
+ 
+------------------------------------------------------
+verwijzen naar ai als je het wil gebruiken in bestand:
+require_once 'workflows/AI_NLM/vendor/autoload.php';
+
+
+nier erge fout code 
+Deprecated: Implicit conversion from float 1.3 to int loses precision in /workspaces/IenI_domein_H/workflows/AI_NLM/vendor/yooper/php-text-analysis/src/Sentiment/Vader.php on line 135
+
+Deprecated: Implicit conversion from float 1.3 to int loses precision in /workspaces/IenI_domein_H/workflows/AI_NLM/vendor/yooper/php-text-analysis/src/Sentiment/Vader.php on line 136
