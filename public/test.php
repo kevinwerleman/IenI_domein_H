@@ -15,11 +15,13 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
     }
 }
 
+//aleen dit aanraken voor database invoegen!!!!!
 $mysqli = new mysqli("127.0.0.1", "user", "password", "voornamen");
 $result = $mysqli->query("SELECT naam FROM namen");
 
 $tekst = "the product was cool.";
 $tokens = tokenize($tekst);
+//!!!!!!!!!!!!!!!!!!
 
 
 $tokens = array_map(function($token) {
