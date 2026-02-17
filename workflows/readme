@@ -26,3 +26,13 @@ nier erge fout code
 Deprecated: Implicit conversion from float 1.3 to int loses precision in /workspaces/IenI_domein_H/workflows/AI_NLM/vendor/yooper/php-text-analysis/src/Sentiment/Vader.php on line 135
 
 Deprecated: Implicit conversion from float 1.3 to int loses precision in /workspaces/IenI_domein_H/workflows/AI_NLM/vendor/yooper/php-text-analysis/src/Sentiment/Vader.php on line 136
+
+voorbeeld:
+$query = "SELECT Name, CountryCode FROM City ORDER BY ID DESC";
+
+$result = $mysqli->query($query);
+----
+
+database:
+KLANTENBERICHTEN EIND 
+

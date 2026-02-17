@@ -4,7 +4,7 @@
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
-//-------------
+// -------------
 
 require_once __DIR__ . '/../workflows/AI_NLM/vendor/autoload.php';
 
@@ -16,8 +16,10 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
 }
 
 //aleen dit aanraken voor database invoegen!!!!!
-$mysqli = new mysqli("127.0.0.1", "user", "password", "voornamen");
-$result = $mysqli->query("SELECT naam FROM namen");
+$mysqli = new mysqli("127.0.0.1", "user", "password", "KLANTENBERICHTEN EIND");
+$result = $mysqli->query("SELECT inhoud FROM klantenberichten");
+
+
 
 $tekst = "the product was cool.";
 $tokens = tokenize($tekst);
@@ -53,7 +55,7 @@ $sentiment = $vader->getPolarityScores($tokens);
 
     <?php  
             while ($row = $result->fetch_assoc()) {
-               echo $row['naam'] .  "<br>";
+               echo $row['inhoud'] .  "<br>";
              }
     ?>
 
