@@ -1,9 +1,9 @@
 <?php
 
 //---voor errir testen
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // -------------
 
 require_once __DIR__ . '/../workflows/AI_NLM/vendor/autoload.php';
@@ -11,9 +11,11 @@ require_once __DIR__ . '/../workflows/AI_NLM/vendor/autoload.php';
 class MyVader extends \TextAnalysis\Sentiment\Vader {
     protected function getTxtFilePath() : string
     {
-        return __DIR__ . '/../vaderSentiment-3.3.2/vaderSentiment/vader_lexicon.txt';
+        return __DIR__ . '/../workflows/AI_NLM/vendor/yooper/php-text-analysis/storage/sentiment/vader_lexicon/vader_lexicon.txt';
     }
 }
+
+
 
 $mysqli = new mysqli("127.0.0.1", "user", "password", "KLANTENBERICHTEN EIND");
 $result = $mysqli->query("SELECT inhoud FROM klantenberichten");
@@ -30,15 +32,14 @@ $result = $mysqli->query("SELECT inhoud FROM klantenberichten");
 
     <h3>positief of negatief:</h3>
     
-<?php
-while ($row = $result->fetch_assoc()): 
+<?php while ($row = $result->fetch_assoc()): 
 
     echo $row['inhoud'] .  "<br>";
     $tekst = $row['inhoud'];
 
-echo "<p><strong>Originele tekst:</strong> " . htmlspecialchars($tekst) . "</p>";
+    
 
-    //$tekst = "I hate this product!";
+    $tekst = "I hate this product!";
     $tokens = tokenize($tekst);
     //!!!!!!!!!!!!!!!!!!
 
@@ -48,6 +49,7 @@ echo "<p><strong>Originele tekst:</strong> " . htmlspecialchars($tekst) . "</p>"
     }, $tokens);
     $tokens = array_filter($tokens);
     $tokens = array_values($tokens);
+
 
     $vader = new MyVader();
     $sentiment = $vader->getPolarityScores($tokens);
