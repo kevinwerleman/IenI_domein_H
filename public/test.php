@@ -1,9 +1,9 @@
 <?php
 
 //---voor errir testen
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // -------------
 
 require_once __DIR__ . '/../workflows/AI_NLM/vendor/autoload.php';
@@ -18,6 +18,45 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
 }
 
 $mysqli = new mysqli("127.0.0.1", "user", "password", "KLANTENBERICHTEN EIND");
+
+//-------
+
+
+
+$conn = new mysqli("127.0.0.1", "user", "password", "KLANTENBERICHTEN EIND");
+
+// Check verbinding
+if ($conn->connect_error) {
+    die("Verbinding mislukt: " . $conn->connect_error);
+}
+echo "Verbonden!";
+$bestand = fopen("data.csv", "r");
+
+// Eerste rij overslaan (headers)
+fgetcsv($bestand);
+
+// Iedere rij verwerken
+while (($rij = fgetcsv($bestand, 1000, ",")) !== FALSE) {
+    $naam   = $rij[0];
+    $email  = $rij[1];
+    $leeftijd = $rij[2];
+
+    // SQL statement
+    $sql = "INSERT INTO gebruikers (naam, email, leeftijd) VALUES ('$naam', '$email', $leeftijd)";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Rij opgeslagen: $naam<br>";
+    } else {
+        echo "Fout: " . $conn->error . "<br>";
+    }
+}
+
+fclose($bestand);
+$conn->close();
+
+
+//-----
+
 $result = $mysqli->query("SELECT inhoud FROM klantenberichten");
 
 $Alle_Stemmed = [];
@@ -28,12 +67,45 @@ $Alle_Stemmed = [];
 <!doctype html>
 <html lang="nl">
 <head>  
+<style>
+    .titel {
+    font-size: 60px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: darkblue;
+    color: white;
+    padding: 20px;
+    text-align: center;
+
+
+    }
+</style>
+    
+
     <meta charset="utf8">
 </head>
 <body>
+    <h1 class="titel"> InsightAI </h1>
 
-    <h3>positief of negatief:</h3>
-    
+    <h3>InsightAI</h3>
+    <p> ik heb geen idee </p>
+    <img src="https://www.scholenmarktgroningen.nl/uploads/hero-1920/7c3a4cbb-6a84-5239-a043-26fd581ee602/3330568835/MJJ-20240617-Augustinus-151%20%282%29.jpg" alt="Beschrijving">
+    <!DOCTYPE html>
+<html>
+<head>
+<style>
+.balk {
+  background-color: #00008B; /* donkerblauw */
+  height: 50px;
+  width: 50px;
+}
+</style>
+</head>
+<body>
+
+<div class="balk"></div>
+
+</body>
+</html>
 <?php while ($row = $result->fetch_assoc()): 
 
     echo $row['inhoud'] .  "<br>"; // mag later wel weg
@@ -80,12 +152,12 @@ $Alle_Stemmed = [];
     //^^^^^^^^^^^^^^sentiment werkt^^^^^^^^^^^^
 
 
-foreach ($stemmedTokens as $woord) {
-    $woord = strtolower($woord);
-    if (!in_array($woord, $stopwords)) {
-        $alleStems[] = $woord;
-    }
-}
+// foreach ($stemmedTokens as $woord) {
+//     $woord = strtolower($woord);
+//     if (!in_array($woord, $stopwords)) {
+//         $alleStems[] = $woord;
+//     }
+// }
 
 
 ?>
@@ -93,7 +165,7 @@ foreach ($stemmedTokens as $woord) {
 
 
 
-<p>stemmed stest  <?=  "Stemmed: " . implode(', ', $stemmedTokens) . " \n"; ?> </p>;
+<!-- <p>stemmed stest  <?=  "Stemmed: " . implode(', ', $stemmedTokens) . " \n"; ?> </p>; -->
 
 
 <?php 

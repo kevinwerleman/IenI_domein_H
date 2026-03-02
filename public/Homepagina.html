@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightAI - Slimme Klantanalyse met AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #1e1e1e;
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #2563eb;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                        url('https://images.unsplash.com/photo-1666875753105-c63a6f3bdc86?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8QW5hbHlzZXxlbnwwfHwwfHx8MA%3D%3D') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-3px);
+        }
+
+        section {
+            padding: 100px 60px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-card h3 {
+            margin: 15px 0;
+            color: #2563eb;
+        }
+
+        .about {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        .about img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media(max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            section {
+                padding: 80px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">InsightAI</div>
+
+    <!-- MENU (kun je later aanpassen) -->
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Wie zijn wij</a></li>
+            <li><a href="#">Functionaliteiten</a></li>
+            <li><a href="#">Prijzen</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>InsightAI</h1>
+        <p>InsightAI analyseert automatisch klantenberichten en geeft direct inzicht in jouw sterke en zwakke punten.</p>
+        <button class="btn">Start Gratis</button>
+    </div>
+</div>
+
+<section>
+    <h2 class="section-title">Wat doet InsightAI?</h2>
+    <div class="features">
+        <div class="feature-card">
+            <div style="font-size:40px;">🤖</div>
+            <h3>AI Analyse</h3>
+            <p>Automatische analyse van e-mails, reviews en chats.</p>
+        </div>
+
+        <div class="feature-card">
+            <div style="font-size:40px;">📊</div>
+            <h3>Inzicht in Data</h3>
+            <p>Ontdek patronen en trends in klantfeedback.</p>
+        </div>
+
+        <div class="feature-card">
+            <div style="font-size:40px;">⚡</div>
+            <h3>Direct Resultaat</h3>
+            <p>Ontvang binnen seconden duidelijke rapportages.</p>
+        </div>
+    </div>
+</section>
+
+<section class="about">
+    <img src="https://images.unsplash.com/photo-1674027444485-cec3da58eef4?q=80&w=2000" alt="AI Dashboard">
+
+    <div class="about-text">
+        <h2>Wie zijn wij?</h2>
+        <p>
+            InsightAI is opgericht door drie gedreven leerlingen uit 6 VWO: Kevin Werleman, Corel Kilic en Thijmen Voogd.
+            Wij delen een sterke passie voor Artificiële Intelligentie en zetten onze kennis in om bedrijven te helpen
+            hun klanten beter te begrijpen.
+        </p>
+    </div>
+</section>
+
+<div class="cta">
+    <h2>Klaar om je bedrijf te verbeteren met AI?</h2>
+    <p>Begin vandaag nog met InsightAI.</p>
+    <br>
+    <button class="btn">Maak een account : TEST</button>
+</div>
+
+<footer>
+    © 2026 InsightAI — Alle rechten voorbehouden
+</footer>
+
+</body>
+</html>

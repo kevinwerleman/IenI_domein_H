@@ -36,3 +36,11 @@ $result = $mysqli->query($query);
 database:
 KLANTENBERICHTEN EIND 
 
+use TextAnalysis\Exceptions\InvalidParameterSizeException;
+
+ /**
+     * An associative array that holds all the frequencies per token
+     * @var array 
+     */
+    protected $keyValues = array();
+    
