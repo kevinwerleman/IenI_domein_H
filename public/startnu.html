@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start Nu - InsightAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f7fb;
+    padding-top: 90px;
+}
+
+/* HEADER */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: white;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logo a {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #2563eb;
+}
+
+nav a {
+    text-decoration: none;
+    margin-left: 20px;
+    color: #333;
+}
+
+/* CONTENT */
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 25px;
+    color: #555;
+}
+
+input[type="file"] {
+    margin: 20px 0;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #1d4ed8;
+}
+
+.result {
+    margin-top: 25px;
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <a href="index.html">InsightAI</a>
+    </div>
+
+    <nav>
+        <a href="Homepagina.html">Home</a>
+        <a href="startnu.html">Start Nu</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Start Nu met InsightAI 🚀</h1>
+    <p>Upload hier je CSV bestand met klantenberichten.</p>
+
+    <input type="file" id="csvFile" accept=".csv">
+    <br>
+    <button class="btn" onclick="analyzeCSV()">Analyseer bestand</button>
+
+    <div id="output"></div>
+    <div class="result" id="preview"></div>
+</div>
+
+<script>
+function analyzeCSV() {
+    const fileInput = document.getElementById("csvFile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Upload eerst een CSV bestand.");
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        const text = event.target.result;
+        const rows = text.split("\n");
+
+        let positive = 0;
+        let negative = 0;
+
+        rows.forEach(row => {
+            const lower = row.toLowerCase();
+
+            if (lower.includes("goed") || lower.includes("top")) {
+                positive++;
+            }
+
+            if (lower.includes("slecht") || lower.includes("probleem")) {
+                negative++;
+            }
+        });
+
+        document.getElementById("output").innerHTML =
+            "<h3>Analyse Resultaat:</h3>" +
+            "<p>Totale berichten: " + rows.length + "</p>" +
+            "<p>Positief: " + positive + "</p>" +
+            "<p>Negatief: " + negative + "</p>";
+
+        document.getElementById("preview").innerText =
+            "Voorbeeld berichten:\n\n" +
+            rows.slice(0, 5).join("\n");
+    };
+
+    reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>

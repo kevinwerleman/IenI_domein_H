@@ -30,22 +30,23 @@ if ($conn->connect_error) {
     die("Verbinding mislukt: " . $conn->connect_error);
 }
 echo "Verbonden!";
+
 $bestand = fopen("data.csv", "r");
 
 // Eerste rij overslaan (headers)
 fgetcsv($bestand);
 
 // Iedere rij verwerken
-while (($rij = fgetcsv($bestand, 1000, ",")) !== FALSE) {
-    $naam   = $rij[0];
+while (($rij = fgetcsv($bestand, null, ",")) !== FALSE) {
+    $name   = $rij[0];
     $email  = $rij[1];
-    $leeftijd = $rij[2];
+    $inhoud = $rij[2];
 
     // SQL statement
-    $sql = "INSERT INTO gebruikers (naam, email, leeftijd) VALUES ('$naam', '$email', $leeftijd)";
+    $sql = "INSERT INTO gebruikers (name, email, inhoud) VALUES ('$name', '$email', '$inhoud')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "Rij opgeslagen: $naam<br>";
+        echo "Rij opgeslagen: $name<br>";
     } else {
         echo "Fout: " . $conn->error . "<br>";
     }
