@@ -43,4 +43,37 @@ use TextAnalysis\Exceptions\InvalidParameterSizeException;
      * @var array 
      */
     protected $keyValues = array();
+
+    // tijmen dinf 
+
+    <!-- <html lang="nl">
+<head>  
+ <style>
+    .titel {
+    font-size: 60px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: darkblue;
+    color: white;
+    padding: 20px;
+    text-align: center;
+
+
+    }
+</style> 
+    
+
+    <meta charset="utf8">
+</head>
+<body>
+    <h1 class="titel"> InsightAI </h1>
+
+    <h3>InsightAI</h3>
+    <p> ik heb geen idee </p>
+    <img src="https://www.scholenmarktgroningen.nl/uploads/hero-1920/7c3a4cbb-6a84-5239-a043-26fd581ee602/3330568835/MJJ-20240617-Augustinus-151%20%282%29.jpg" alt="Beschrijving">
+    <!DOCTYPE html>
+<html> -->
+
+<!-- 
+<div class="balk"></div> -->
+
     
