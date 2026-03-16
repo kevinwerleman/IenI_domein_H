@@ -1,4 +1,11 @@
 <?php
+
+//---voor errir testen
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+// -------------
+
 $error = "";
 $success = "";
 $success_data ="";
@@ -31,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     // if there is no error, then import CSV data into MySQL Database
     if(empty($error)){
 		// Include the database connection file 
-		require_once 'dbclass.php';
-		$db = new DB;
+		require_once('../databases/klantenberichten_CKT.sql');
+		$db = new klantenberichten_CKT;
         $file = fopen($file_tmp, "r");
         while (($row = fgetcsv($file)) !== FALSE) {
 			// Insert csv data into the `import_csv_data` database table

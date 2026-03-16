@@ -21,7 +21,7 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
 }
 
  
-$mysqli = new mysqli("127.0.0.1", "user", "password", "KLANTENBERICHTEN EIND");
+$mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
 $result = $mysqli->query("SELECT inhoud FROM klantenberichten");
 
 $Alle_Stemmed = [];
