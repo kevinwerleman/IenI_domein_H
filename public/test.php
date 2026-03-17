@@ -1,6 +1,6 @@
 <?php
 
-//---voor errir testen
+//---voor error testen
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -13,6 +13,26 @@ $stopwords = file($stopwordsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)
 $stopwords = array_map('strtolower', $stopwords);
 
 
+$categories = [
+
+    "bezorging" => ["delivery","shipping","shipment","package","parcel","courier"],
+    "kwaliteit" => ["quality","product","item","material","build"],
+    "service" => ["service","support","staff","helpdesk","customer service"],
+    "prijs" => ["price","cost","expensive","cheap","value"]
+
+];
+
+
+$categoryStats = [];
+foreach ($categories as $cat => $woorden) {
+    $categoryStats[$cat] = [
+        "positief" => 0,
+        "negatief" => 0,
+        "totaal" => 0
+    ];
+}
+
+
 class MyVader extends \TextAnalysis\Sentiment\Vader {
     protected function getTxtFilePath() : string
     {
@@ -20,74 +40,116 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
     }
 }
 
- 
+
 $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
 $result = $mysqli->query("SELECT inhoud FROM klantenberichten");
 
 $Alle_Stemmed = [];
 
-?> 
-
+?>
 
 <?php while ($row = $result->fetch_assoc()): 
 
-    echo $row['inhoud'] .  "<br>"; // mag later wel weg
     $tekst = $row['inhoud'];
 
-    
+    echo "<hr>";
+    echo "<p><strong>Tekst:</strong> $tekst</p>";
 
-    // $tekst = "I hate this product!";
+    // 🔹 Tokenize
     $tokens = tokenize($tekst);
     $tokens = array_map(function($token) { return preg_replace('/[^\p{L}\p{N}]/u', '', $token); }, $tokens);
     $tokens = array_filter($tokens);
     $tokens = array_values($tokens);
 
-    
+    // 🔹 Stemming
     $stemmedTokens = stem($tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
 
-
+    // 🔹 Sentiment
     $vader = new MyVader();
     $sentiment = $vader->getPolarityScores($tokens);
 
-
     if ($sentiment['compound'] >= 0.05) {
         $conclusie = 'Positief';
-    }   else {
-            if ($sentiment['compound'] <= -0.05) {
-                $conclusie = 'negatief';
-            } else { 
-                $conclusie = 'neutraal';
-            }
-        }
+    } elseif ($sentiment['compound'] <= -0.05) {
+        $conclusie = 'Negatief';
+    } else { 
+        $conclusie = 'Neutraal';
+    }
 
-    //^^^^^^^^^^^^^^sentiment werkt^^^^^^^^^^^^
-
-   foreach ($stemmedTokens as $woord) {
+    foreach ($stemmedTokens as $woord) {
         $woord = strtolower($woord);
         if (!in_array($woord, $stopwords)) {
             $Alle_Stemmed[] = $woord;
         }
     }
 
+
+    foreach ($categories as $category => $woordenlijst) {
+
+        foreach ($stemmedTokens as $woord) {
+
+            $woord = strtolower($woord);
+
+            foreach ($woordenlijst as $trigger) {
+
+               
+                if (levenshtein($woord, $trigger) <= 2 || str_contains($woord, $trigger)) {
+
+                    $categoryStats[$category]["totaal"]++;
+
+                    if ($conclusie == "Positief") {
+                        $categoryStats[$category]["positief"]++;
+                    } elseif ($conclusie == "Negatief") {
+                        $categoryStats[$category]["negatief"]++;
+                    }
+                }
+            }
+        }
+    }
+
 ?>
 
-    <p><strong>Tekst:</strong> <?= $tekst?></p>
+<ul>
+    <li>Positief: <?= $sentiment['pos'] ?></li>
+    <li>Negatief: <?= $sentiment['neg'] ?></li>
+    <li>Neutraal: <?= $sentiment['neu'] ?></li>
+    <li>Compound: <?= $sentiment['compound'] ?></li>
+</ul>
 
-    <ul>
-        <li>Positief: <?= $sentiment['pos'] ?></li>
-        <li>Negatief: <?= $sentiment['neg'] ?></li>
-        <li>Neutraal: <?= $sentiment['neu'] ?></li>
-        <li>Compound: <?= $sentiment['compound'] ?></li>
-    </ul>
+<p><strong>Conclusie:</strong> <?= $conclusie ?></p>
 
-
-    <p><strong>Conclusie:</strong> <?= $conclusie ?></p>
-
-    <p>stemmed stest  <?=  "Stemmed: " . implode(', ', $stemmedTokens); ?> </p>
+<p><strong>Stemmed:</strong> <?= implode(', ', $stemmedTokens); ?></p>
 
 <?php endwhile; ?>
- 
+
+
 <?php
-echo "<p>Alle gestemde woorden (zonder stopwoorden):<p>";
-echo "<p>" . print_r(array_count_values($Alle_Stemmed), true) . "</p>";
+
+
+echo "<hr><h2>📊 Analyse per categorie</h2>";
+
+foreach ($categoryStats as $cat => $data) {
+
+    echo "<div style='margin-bottom:20px; padding:15px; background:white; border-radius:10px;'>";
+
+    echo "<h3>" . ucfirst($cat) . "</h3>";
+
+    echo "<p>Totaal: " . $data["totaal"] . "</p>";
+    echo "<p>Positief: " . $data["positief"] . "</p>";
+    echo "<p>Negatief: " . $data["negatief"] . "</p>";
+
+    if ($data["negatief"] > $data["positief"]) {
+        echo "<strong style='color:red'>⚠ Verbeterpunt</strong>";
+    } else {
+        echo "<strong style='color:green'>✔ Sterk punt</strong>";
+    }
+
+    echo "</div>";
+}
+
+
+
+echo "<hr><h2>📌 Meest voorkomende woorden</h2>";
+print_r(array_count_values($Alle_Stemmed));
+
 ?>
