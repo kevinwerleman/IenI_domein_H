@@ -3,31 +3,52 @@
 //---voor error testen
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_DEPRECATED);
 // -------------
 
+
+//AI oproepen
 require_once __DIR__ . '/../workflows/AI_NLM/vendor/autoload.php';
 
-$stopwordsFile = __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_1_en.txt';
-$stopwords = file($stopwordsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-$stopwords = array_map('strtolower', $stopwords);
+//stop words oproepen
+$stopwordsFiles = [
+    __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_1_en.txt',
+    __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_2_en.txt',
+    __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_3_en.txt',
+    __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_4_google_en.txt',
+    __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_5_en.txt',
+    __DIR__ . '/../workflows/AI_NLM/vendor/yooper/stop-words/data/stop-words_english_6_en.txt'
+];
 
-$categories = [
+$stopwords = [];
+foreach ($stopwordsFiles as $file) {
+    if (file_exists($file)) {
+        $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if ($lines !== false) {
+            $stopwords = array_merge($stopwords, $lines);
+        }
+    }
+}
+
+// katagorizeren
+$categorie = [
     "bezorging" => ["bezorg", "lever", "verzend", "delivery", "shipping"],
     "kwaliteit" => ["kwaliteit", "kapot", "defect", "broken"],
     "service" => ["service", "klantenservice", "support", "help"],
     "prijs" => ["prijs", "duur", "goedkoop", "expensive"]
 ];
 
-$categoryStats = [];
-foreach ($categories as $cat => $woorden) {
-    $categoryStats[$cat] = [
+
+$categorieStats = [];
+foreach ($categorie as $cat => $woorden) {
+    $categorieStats[$cat] = [
         "positief" => 0,
         "negatief" => 0,
         "totaal" => 0
     ];
 }
 
+// sentiment anylise 
 class MyVader extends \TextAnalysis\Sentiment\Vader {
     protected function getTxtFilePath() : string
     {
@@ -38,19 +59,23 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
 $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
 $result = $mysqli->query("SELECT inhoud FROM recensies");
 
+
 $Alle_Stemmed = [];
+$sentimentCounts = [
+    'positief' => 0,
+    'negatief' => 0,
+    'neutraal' => 0
+];
+$recensies = []; 
 
-?>
 
-<?php while ($row = $result->fetch_assoc()): 
 
-    echo $row['inhoud'] .  "<br>"; // mag later wel weg
+while ($row = $result->fetch_assoc()) { 
+
     $tekst = $row['inhoud'];
 
-    echo "<hr>";
-    echo "<p><strong>Tekst:</strong> $tekst</p>";
 
-// $tekst = "I hate this product!";
+    //tokenizer
     $tokens = tokenize($tekst);
     $tokens = array_map(function($token) { return preg_replace('/[^\p{L}\p{N}]/u', '', $token); }, $tokens);
     $tokens = array_filter($tokens);
@@ -61,19 +86,20 @@ $Alle_Stemmed = [];
     $vader = new MyVader();
     $sentiment = $vader->getPolarityScores($tokens);
 
-
+    // sentiment 
     if ($sentiment['compound'] >= 0.05) {
         $conclusie = 'Positief';
     }   else {
             if ($sentiment['compound'] <= -0.05) {
-                $conclusie = 'negatief';
+                $conclusie = 'Negatief';
             } else { 
-                $conclusie = 'neutraal';
+                $conclusie = 'Neutraal';
             }
         }
 
     //^^^^^^^^^^^^^^sentiment werkt^^^^^^^^^^^^
 
+    //stemmer 
     foreach ($stemmedTokens as $woord) {
         $woord = strtolower($woord);
         if (!in_array($woord, $stopwords)) {
@@ -81,62 +107,98 @@ $Alle_Stemmed = [];
         }
     }
 
-    foreach ($categories as $category => $woordenlijst) {
+   foreach ($categorie as $category => $woordenlijst) {
         foreach ($stemmedTokens as $woord) {
             $woord = strtolower($woord);
             foreach ($woordenlijst as $trigger) {
                 if (levenshtein($woord, $trigger) <= 2 || str_contains($woord, $trigger)) {
-                    $categoryStats[$category]["totaal"]++;
+                    $categorieStats[$category]["totaal"]++;
                     if ($conclusie == "Positief") {
-                        $categoryStats[$category]["positief"]++;
+                        $categorieStats[$category]["positief"]++;
                     } elseif ($conclusie == "Negatief") {
-                        $categoryStats[$category]["negatief"]++;
+                        $categorieStats[$category]["negatief"]++;
                     }
                 }
             }
         }
     }
 
-?>
+    $sentimentCounts[strtolower($conclusie)]++;
 
-<ul>
-    <li>Positief: <?= $sentiment['pos'] ?></li>
-    <li>Negatief: <?= $sentiment['neg'] ?></li>
-    <li>Neutraal: <?= $sentiment['neu'] ?></li>
-    <li>Compound: <?= $sentiment['compound'] ?></li>
-</ul>
-
-    <p><strong>Conclusie:</strong> <?= $conclusie ?></p>
-
-    <p><strong>Stemmed:</strong> <?= implode(', ', $stemmedTokens); ?></p>
-
-<?php endwhile; ?>
-
-
-<?php
-
-echo "<hr><h2>Analyse per categorie</h2>";
-
-foreach ($categoryStats as $cat => $data) {
-
-    echo "<div style='margin-bottom:20px; padding:15px; background:white; border-radius:10px;'>";
-
-    echo "<h3>" . ucfirst($cat) . "</h3>";
-
-    echo "<p>Totaal: " . $data["totaal"] . "</p>";
-    echo "<p>Positief: " . $data["positief"] . "</p>";
-    echo "<p>Negatief: " . $data["negatief"] . "</p>";
-
-    if ($data["negatief"] > $data["positief"]) {
-        echo "<strong style='color:red'>Verbeterpunt</strong>";
-    } else {
-        echo "<strong style='color:green'>Sterk punt</strong>";
-    }
-
-    echo "</div>";
+    // review opslaan voor later weergave
+    $recensies[] = [
+        'tekst'      => $tekst,
+        'sentiment'  => $sentiment,
+        'conclusie'  => $conclusie,
+        'stemmed'    => $stemmedTokens
+    ];
 }
-
-echo "<hr><h2>bannanen</h2>";
-print_r(array_count_values($Alle_Stemmed));
-
 ?>
+
+<!-- ------------------------------------corel aleen wat hieronder staat aanpassen wat hier boven staat mag je NIET aanraken AI gaat meschien zeuren over dat de html apart staat van php maar ik vind dit overzichtelijk------------- -->
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentimentanalyse Data</title>
+</head>
+<body>
+    <h1>Sentimentanalyse Data</h1>
+
+    <h2>Recensies</h2>
+
+    <?php if (empty($recensies)): ?>
+        <p>Geen recensies gevonden.</p>
+    <?php else: ?>
+        <?php foreach ($recensies as $i): ?>
+            <div>
+                <p><strong>Tekst:</strong> <?= ($i['tekst']) ?></p>
+                <p><strong>Conclusie:</strong> <?= $i['conclusie'] ?></p>
+                <p><strong>Stemmed:</strong> <?= implode(', ', $i['stemmed']) ?></p>
+                <hr>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
+    <h2>Analyse per categorie</h2>
+    <?php foreach ($categorieStats as $cat => $data): ?>
+        <div>
+            <h3><?= ucfirst($cat) ?></h3>
+            <p>Totaal: <?= $data["totaal"] ?></p>
+            <p>Positief: <?= $data["positief"] ?></p>
+            <p>Negatief: <?= $data["negatief"] ?></p>
+            <?php if ($data["negatief"] > $data["positief"]): ?>
+                <p>Verbeterpunt</p>
+            <?php else: ?>
+                <p>Sterk punt</p>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+    <hr>
+
+    <h2>Meest voorkomende woorden (gestemd, zonder stopwoorden)</h2>
+    <?php if (!empty($Alle_Stemmed)): ?>
+        <ul>
+        <?php
+        $freq = array_count_values($Alle_Stemmed);
+        arsort($freq);
+        $i = 0;
+        foreach ($freq as $woord => $aantal):
+            if (++$i > 20) break;
+        ?>
+            <li><?= htmlspecialchars($woord) ?>: <?= $aantal ?> keer</li>
+        <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p>Geen woorden verzameld.</p>
+    <?php endif; ?>
+    <hr>
+    <h2>Overzicht sentimenten</h2>
+    <ul>
+        <li>Positief: <?= $sentimentCounts['positief'] ?></li>
+        <li>Negatief: <?= $sentimentCounts['negatief'] ?></li>
+        <li>Neutraal: <?= $sentimentCounts['neutraal'] ?></li>
+    </ul>
+</body>
+</html>
