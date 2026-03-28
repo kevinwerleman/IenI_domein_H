@@ -31,12 +31,12 @@ foreach ($categories as $cat => $woorden) {
 class MyVader extends \TextAnalysis\Sentiment\Vader {
     protected function getTxtFilePath() : string
     {
-        return __DIR__ . '/../workflows/AI_NLM/vendor/yooper/php-text-analysis/storage/sentiment/vader_lexicon/vader_lexicon.txt';
+        return __DIR__ . '/../workflows/vader_lexicon.txt';
     }
 }
 
 $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
-$result = $mysqli->query("SELECT inhoud FROM klantenberichten");
+$result = $mysqli->query("SELECT inhoud FROM recensies");
 
 $Alle_Stemmed = [];
 

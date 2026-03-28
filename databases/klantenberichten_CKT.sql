@@ -32,8 +32,11 @@ CREATE TABLE `recensies` (
 --
 -- Dumping data for table `recensies`
 --
+
+LOCK TABLES `recensies` WRITE;
+/*!40000 ALTER TABLE `recensies` DISABLE KEYS */;
 INSERT INTO `recensies` (`name`, `email`, `inhoud`) VALUES ('Barend van Kooten','Barend@gmail.com','I was pleasently suprised by the service and the product'),('test','test@mail.com','I love this product!'),('testN','testN@mail.com','I hate this product!'),('Test_lang','Test_L@mail.com','I bought this gadget two weeks ago and I\'m already having issues. \r\nThe screen cracked after a minor drop, which is really disappointing. \r\nIt feels like the materials are cheap and not built to last. \r\nFor the price I paid, I expected much better durability. \r\nIt\'s frustrating when a product fails so quickly. \r\nI wouldn\'t recommend this to anyone looking for something reliable.');
-/*!40000 ALTER TABLE `klantenberichten` ENABLE KEYS */;
+/*!40000 ALTER TABLE `recensies` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -45,12 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-03  8:57:40
-
-
-
-
-
-
-
-
+-- Dump completed on 2026-03-28 13:52:45
