@@ -57,7 +57,7 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
 }
 
 $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
-$result = $mysqli->query("SELECT inhoud FROM recensies");
+$result = $mysqli->query("SELECT * FROM recensies");
 
 
 $Alle_Stemmed = [];
@@ -69,14 +69,16 @@ $sentimentCounts = [
 $recensies = []; 
 
 
-
 while ($row = $result->fetch_assoc()) { 
 
-    $tekst = $row['inhoud'];
+    $inhoud = $row['inhoud'];
+    $name  = $row['name'];
+    $email = $row['email'];
+
 
 
     //tokenizer
-    $tokens = tokenize($tekst);
+    $tokens = tokenize($inhoud);
     $tokens = array_map(function($token) { return preg_replace('/[^\p{L}\p{N}]/u', '', $token); }, $tokens);
     $tokens = array_filter($tokens);
     $tokens = array_values($tokens);
@@ -125,12 +127,15 @@ while ($row = $result->fetch_assoc()) {
 
     $sentimentCounts[strtolower($conclusie)]++;
 
-    // review opslaan voor later weergave
-    $recensies[] = [
-        'tekst'      => $tekst,
-        'sentiment'  => $sentiment,
-        'conclusie'  => $conclusie,
-        'stemmed'    => $stemmedTokens
+// voor weergaven
+        $recensies[] = [
+        'inhoud'     => $inhoud,
+        'naam'       => $name,
+        'email'      => $email,
+        'sentiment'  => $sentiment, //waarde van positiefitijd
+        'conclusie'  => $conclusie, // of een wort pos of neg is
+        'stemmed'    => $stemmedTokens, // woorden na stopwords en fout gesplelt 
+        'tokens'     => $tokens // alle woorden
     ];
 }
 ?>
@@ -153,26 +158,32 @@ while ($row = $result->fetch_assoc()) {
     <?php else: ?>
         <?php foreach ($recensies as $i): ?>
             <div>
-                <p><strong>Tekst:</strong> <?= ($i['tekst']) ?></p>
+                <p><strong>Naam:</strong> <?= ($i['naam']) ?></p>
+                <p><strong>E‑mail:</strong> <?= ($i['email']) ?></p>
+                <p><strong>Inhoud:</strong> <?= ($i['inhoud']) ?></p>
                 <p><strong>Conclusie:</strong> <?= $i['conclusie'] ?></p>
                 <p><strong>Stemmed:</strong> <?= implode(', ', $i['stemmed']) ?></p>
+                <p><strong>Tokens:</strong> <?= implode(', ', $i['tokens']) ?></p>
                 <hr>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
 
     <h2>Analyse per categorie</h2>
-    <?php foreach ($categorieStats as $cat => $data): ?>
+    <?php foreach ($categorieStats as $cat => $a): ?>
         <div>
-            <h3><?= ucfirst($cat) ?></h3>
-            <p>Totaal: <?= $data["totaal"] ?></p>
-            <p>Positief: <?= $data["positief"] ?></p>
-            <p>Negatief: <?= $data["negatief"] ?></p>
-            <?php if ($data["negatief"] > $data["positief"]): ?>
+            
+            <h3><?= ($cat) ?></h3>
+                <p>Totaal: <?= $a["totaal"] ?></p>
+                <p>Positief: <?= $a["positief"] ?></p>
+                <p>Negatief: <?= $a["negatief"] ?></p>
+
+            <?php if ($a["negatief"] > $a["positief"]): ?>
                 <p>Verbeterpunt</p>
             <?php else: ?>
                 <p>Sterk punt</p>
             <?php endif; ?>
+
         </div>
     <?php endforeach; ?>
     <hr>
