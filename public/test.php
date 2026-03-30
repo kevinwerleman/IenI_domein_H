@@ -60,7 +60,7 @@ $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
 $result = $mysqli->query("SELECT * FROM recensies");
 
 
-$Alle_Stemmed = [];
+$Alle_Tokens = [];
 $sentimentCounts = [
     'positief' => 0,
     'negatief' => 0,
@@ -88,7 +88,7 @@ while ($row = $result->fetch_assoc()) {
     $aantal_tokens = count($tokens);
 
 
-    $stemmedTokens = stem($tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
+    //$stemmedTokens = stem($tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
 
     $vader = new MyVader();
     $sentiment = $vader->getPolarityScores($tokens);
@@ -113,12 +113,14 @@ while ($row = $result->fetch_assoc()) {
     //^^^^^^^^^^^^^^sentiment werkt^^^^^^^^^^^^
 
     //stemmer 
-    foreach ($stemmedTokens as $woord) {
+    foreach ($tokens as $woord) {
         $woord = strtolower($woord);
         if (!in_array($woord, $stopwords)) {
-            $Alle_Stemmed[] = $woord;
+            $Alle_Tokens[] = $woord;
         }
     }
+
+$stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
 
    foreach ($categorie as $category => $woordenlijst) {
         foreach ($stemmedTokens as $woord) {
@@ -205,10 +207,10 @@ while ($row = $result->fetch_assoc()) {
     <hr>
 
     <h2>Meest voorkomende woorden (gestemd, zonder stopwoorden)</h2>
-    <?php if (!empty($Alle_Stemmed)): ?>
+    <?php if (!empty($stemmedTokens)): ?>
         <ul>
         <?php
-        $freq = array_count_values($Alle_Stemmed);
+        $freq = array_count_values($stemmedTokens);
         arsort($freq);
         $i = 0;
         foreach ($freq as $woord => $aantal):
