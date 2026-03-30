@@ -180,8 +180,9 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
                 <p><strong>E‑mail:</strong> <?= ($i['email']) ?></p>
                 <p><strong>Inhoud:</strong> <?= ($i['inhoud']) ?></p>
                 <p><strong>Conclusie:</strong> <?= $i['conclusie'] ?></p>
-                <p><strong>Stemmed:</strong> <?= implode(', ', $i['stemmed']) ?></p>
+                <!-- <p><strong>Stemmed:</strong> <?= implode(', ', $i['stemmed']) ?></p> -->
                 <p><strong>Tokens:</strong> <?= implode(', ', $i['tokens']) ?></p>
+                <p><strong>woorden in zin:</strong> <?= ($i['aantal_tokens_in_zin']) ?></p>
                 <hr>
             </div>
         <?php endforeach; ?>

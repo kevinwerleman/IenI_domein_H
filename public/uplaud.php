@@ -27,14 +27,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         if ($file_size > 1048576) {
             $error.="<li>Sorry, maximum 1 MB file size is allowed.</li>";
           }
+          $file = fopen($_FILES['file']['tmp_name'], 'r');
+
+while (($row = fgetcsv($file, 1000, ",")) !== FALSE) {
+    if (count($row) > 3) {
+        $error .= "<li>Sorry, maximaal 3 kolommen toegestaan.</li>";
+        break;
+    }
+}
+
+fclose($file);
         // if(empty($error)){
         //     $file_column = file($file_tmp);
         //     if(count($file_column) > 3){
         //         $error.="<li>Sorry, you can upload maximum 3 rows of data in one go.</li>";
-        //     }
-        //     if(count($file_column) < 3){
-        //              $error.="<li>Sorry, you can upload minimum of 3 rows of data in one go.</li>";
-        //     }
+        //    }
         // }
     }
     // if there is no error, then import CSV data into MySQL Database
