@@ -208,16 +208,16 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
     <hr>
 
     <h2>Meest voorkomende woorden (gestemd, zonder stopwoorden)</h2>
-    <?php if (!empty($stemmedTokens)): ?>
+    <?php if (!empty($recensies)): ?>
         <ul>
         <?php
-        $freq = array_count_values($stemmedTokens);
+        $freq = array_count_values(['stemmed']);
         arsort($freq);
         $i = 0;
         foreach ($freq as $woord => $aantal):
             if (++$i > 20) break;
         ?>
-            <li><?= htmlspecialchars($woord) ?>: <?= $aantal ?> keer</li>
+            <li><?= ($woord) ?>: <?= $aantal ?> keer</li>
         <?php endforeach; ?>
         </ul>
     <?php else: ?>

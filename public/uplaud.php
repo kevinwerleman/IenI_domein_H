@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         if ($file_size > 1048576) {
             $error.="<li>Sorry, maximum 1 MB file size is allowed.</li>";
           }
-          $file = fopen($_FILES['file']['tmp_name'], 'r');
+          $file = fopen($_FILES['upload_csv']['tmp_name'], 'r');
 
 while (($row = fgetcsv($file, 1000, ",")) !== FALSE) {
     if (count($row) > 3) {
