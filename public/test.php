@@ -121,6 +121,7 @@ while ($row = $result->fetch_assoc()) {
     }
 
 $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
+$alleStemmedWoorden = array_merge($alleStemmedWoorden, $stemmedTokens);
 
    foreach ($categorie as $category => $woordenlijst) {
         foreach ($stemmedTokens as $woord) {
