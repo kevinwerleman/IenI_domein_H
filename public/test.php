@@ -66,7 +66,10 @@ $sentimentCounts = [
     'negatief' => 0,
     'neutraal' => 0
 ];
+
 $recensies = []; 
+
+$aantal_resensies = count($recensies); 
 
 
 while ($row = $result->fetch_assoc()) { 
@@ -95,7 +98,7 @@ while ($row = $result->fetch_assoc()) {
     $sentiment_neg  = $sentiment['neg'];
     $sentiment_pos  = $sentiment['pos'];
     $sentiment_neu  = $sentiment['neu'];
-    $sentiment_comp  = $sentiment['compound']; 
+    $sentiment_comp = $sentiment['compound']; 
 
     if ($sentiment_comp >= 0.05) {
         $conclusie = 'Positief';
@@ -140,14 +143,15 @@ while ($row = $result->fetch_assoc()) {
         'inhoud'     => $inhoud,
         'naam'       => $name,
         'email'      => $email,
-        'mening_score_neg'  => $sentiment['neg'],
-        'mening_score_pos'  => $sentiment['pos'],
-        'mening_score_neu'  => $sentiment['neu'],
-        'mening_score_tot'  => $sentiment['compound'], 
-        'conclusie'  => $conclusie, // of een wort pos of neg is
-        'stemmed'    => $stemmedTokens, // woorden na stopwords en fout gesplelt 
-        'tokens'     => $tokens, // alle woorden
-        'aantal_tokens_in_zin'  => $aantal_tokens,
+        'mening_score_neg'  => $sentiment_neg,  // de negatiefe waarden die een recensie heeft. 
+        'mening_score_pos'  => $sentiment_pos,  // de positiefe waarden die een recensie heeft. 
+        'mening_score_neu'  => $sentiment_neu,  // de neutaale waarden die een recensie heeft.
+        'mening_score_tot'  => $sentiment_comp, // de totaal berekende waarden die een recentie heeft in getallen. 
+        'conclusie'  => $conclusie, // of een woord positief, negatief of neuraal is.
+        'stemmed'    => $stemmedTokens, // woorden na stopwords en fout gesplelt. 
+        'tokens'     => $tokens, // alle woorden in recensie.
+        'aantal_tokens_in_zin'  => $aantal_tokens, // hoeveelhijd woorden in de recensie.
+        'hoeveelhijd_recensies' => $aantal_resensies, // aantaal geplaatste recensies.
     ];
 }
 ?>
