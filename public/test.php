@@ -82,6 +82,8 @@ while ($row = $result->fetch_assoc()) {
     $tokens = array_map(function($token) { return preg_replace('/[^\p{L}\p{N}]/u', '', $token); }, $tokens);
     $tokens = array_filter($tokens);
     $tokens = array_values($tokens);
+    $aantal_tokens = count($tokens);
+
 
     $stemmedTokens = stem($tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
 
@@ -89,10 +91,16 @@ while ($row = $result->fetch_assoc()) {
     $sentiment = $vader->getPolarityScores($tokens);
 
     // sentiment 
-    if ($sentiment['compound'] >= 0.05) {
+
+    $sentiment_neg  = $sentiment['neg'];
+    $sentiment_pos  = $sentiment['pos'];
+    $sentiment_neu  = $sentiment['neu'];
+    $sentiment_comp  = $sentiment['compound']; 
+
+    if ($sentiment_comp >= 0.05) {
         $conclusie = 'Positief';
     }   else {
-            if ($sentiment['compound'] <= -0.05) {
+            if ($sentiment_comp <= -0.05) {
                 $conclusie = 'Negatief';
             } else { 
                 $conclusie = 'Neutraal';
@@ -132,10 +140,14 @@ while ($row = $result->fetch_assoc()) {
         'inhoud'     => $inhoud,
         'naam'       => $name,
         'email'      => $email,
-        'sentiment'  => $sentiment, //waarde van positiefitijd
+        'mening_score_neg'  => $sentiment['neg'],
+        'mening_score_pos'  => $sentiment['pos'],
+        'mening_score_neu'  => $sentiment['neu'],
+        'mening_score_tot'  => $sentiment['compound'], 
         'conclusie'  => $conclusie, // of een wort pos of neg is
         'stemmed'    => $stemmedTokens, // woorden na stopwords en fout gesplelt 
-        'tokens'     => $tokens // alle woorden
+        'tokens'     => $tokens, // alle woorden
+        'aantal_tokens_in_zin'  => $aantal_tokens,
     ];
 }
 ?>
