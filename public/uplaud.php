@@ -175,6 +175,57 @@ input[type="submit"]:hover {
 </style>
 </head>
 <body>
+<div class="menu">
+<div class="menu-container">
+<div class="logo">Insight AI</div>
+<div class="links">
+<a href="Homepagina.html">Home</a>
+<a href="Functionaliteiten.html">Functionaliteiten</a>
+<a href="uplaud.php">Upload</a>
+<a href="Contact.html">Contact</a>
+</div>
+</div>
+</div>
+
+<style>
+.menu {
+background-color: #1e2a38;
+padding: 15px 0;
+}
+
+.menu-container {
+width: 90%;
+max-width: 1100px;
+margin: auto;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.logo {
+color: white;
+font-weight: bold;
+font-size: 20px;
+letter-spacing: 1px;
+}
+
+.links a {
+color: white;
+text-decoration: none;
+margin-left: 15px;
+font-size: 14px;
+padding: 8px 14px;
+border-radius: 6px;
+transition: 0.3s;
+background-color: rgba(255,255,255,0.1);
+}
+
+.links a:hover {
+background-color: #4da3ff;
+color: white;
+transform: translateY(-2px);
+}
+</style>
 
 <div class="wrapper">
 <h1>CSV uploaden en analyseren</h1>

@@ -178,18 +178,58 @@
 </head>
 <body>
 
-<header>
-    <div class="logo">InsightAI</div>
+<div class="menu">
+<div class="menu-container">
+<div class="logo">Insight AI</div>
+<div class="links">
+<a href="Homepagina.html">Home</a>
+<a href="Functionaliteiten.html">Functionaliteiten</a>
+<a href="uplaud.php">Upload</a>
+<a href="Contact.html">Contact</a>
+</div>
+</div>
+</div>
 
-    <!-- MENU (kun je later aanpassen) -->
-<nav>
-<ul>
-<li><a href="Homepagina.html">Home</a></li>
-<li><a href="Functionaliteiten.html">Functionaliteiten</a></li>
-<li><a href="Prijzen.html">Prijzen</a></li>
-<li><a href="Contact.html">Contact</a></li>
-</ul>
-</nav>
+<style>
+.menu {
+background-color: #1e2a38;
+padding: 15px 0;
+}
+
+.menu-container {
+width: 90%;
+max-width: 1100px;
+margin: auto;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.logo {
+color: white;
+font-weight: bold;
+font-size: 20px;
+letter-spacing: 1px;
+}
+
+.links a {
+color: white;
+text-decoration: none;
+margin-left: 15px;
+font-size: 14px;
+padding: 8px 14px;
+border-radius: 6px;
+transition: 0.3s;
+background-color: rgba(255,255,255,0.1);
+}
+
+.links a:hover {
+background-color: #4da3ff;
+color: white;
+transform: translateY(-2px);
+}
+</style>
+
 
 </header>
 
@@ -209,19 +249,19 @@
         <div class="feature-card">
             <div style="font-size:40px;">🤖</div>
             <h3>AI Analyse</h3>
-            <p>Automatische analyse van e-mails, reviews en chats.</p>
+            <p>Wij bieden bedrijven een AI analyse aan over hun klantenberichten zodat ze de problemen in hun bedrijf vroegtijdig kunnen tackelen.</p>
         </div>
 
         <div class="feature-card">
             <div style="font-size:40px;">📊</div>
             <h3>Inzicht in Data</h3>
-            <p>Ontdek patronen en trends in klantfeedback.</p>
+            <p>Ontdek patronen en trends in klantfeedback zonder alles handmatig door te hoeven nemen.</p>
         </div>
 
         <div class="feature-card">
             <div style="font-size:40px;">⚡</div>
             <h3>Direct Resultaat</h3>
-            <p>Ontvang binnen seconden duidelijke rapportages.</p>
+            <p>Ontvang binnen seconden duidelijke rapportages. Met slechts een klik op de knop gaat ons systeem voor u aan het werk. Dat is makkelijk zeg!</p>
         </div>
     </div>
 </section>
@@ -243,7 +283,10 @@
     <h2>Klaar om je bedrijf te verbeteren met AI?</h2>
     <p>Begin vandaag nog met InsightAI.</p>
     <br>
-    <button class="btn">Maak een account : TEST</button>
+    <a href="uplaud.php">
+    <button class="btn">Begin nu!</button>
+    </a>
+
 </div>
 
 <div class="start-gratis">
