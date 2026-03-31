@@ -68,7 +68,7 @@ $sentimentCounts = [
 ];
 
 $recensies = []; 
-
+$AlleStemmedWoorden = [];
 $aantal_resensies = count($recensies); 
 
 
@@ -87,13 +87,10 @@ while ($row = $result->fetch_assoc()) {
     $tokens = array_values($tokens);
     $aantal_tokens = count($tokens);
 
-
-    //$stemmedTokens = stem($tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
-
+ 
+    // sentiment 
     $vader = new MyVader();
     $sentiment = $vader->getPolarityScores($tokens);
-
-    // sentiment 
 
     $sentiment_neg  = $sentiment['neg'];
     $sentiment_pos  = $sentiment['pos'];
@@ -113,6 +110,8 @@ while ($row = $result->fetch_assoc()) {
     //^^^^^^^^^^^^^^sentiment werkt^^^^^^^^^^^^
 
     //stemmer 
+
+    
     foreach ($tokens as $woord) {
         $woord = strtolower($woord);
         if (!in_array($woord, $stopwords)) {
@@ -121,7 +120,6 @@ while ($row = $result->fetch_assoc()) {
     }
 
 $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
-$alleStemmedWoorden = array_merge($alleStemmedWoorden, $stemmedTokens);
 
    foreach ($categorie as $category => $woordenlijst) {
         foreach ($stemmedTokens as $woord) {
@@ -166,53 +164,134 @@ $alleStemmedWoorden = array_merge($alleStemmedWoorden, $stemmedTokens);
 <head>
     <meta charset="UTF-8">
     <title>Sentimentanalyse Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #1f2d3d;
+            color: white;
+            padding: 20px;
+            margin: 0;
+            text-align: center;
+        }
+
+        h2 {
+            margin: 30px 20px 10px;
+            border-left: 4px solid #1f2d3d;
+            padding-left: 10px;
+        }
+
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .positief { background-color: #2ecc71; }
+        .negatief { background-color: #e74c3c; }
+        .neutraal { background-color: #95a5a6; }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 0 20px;
+        }
+
+        .grid .card {
+            flex: 1 1 250px;
+        }
+
+        ul {
+            margin: 15px 40px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        hr {
+            margin: 30px 20px;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Sentimentanalyse Data</h1>
+
+<h1>Sentimentanalyse Dashboard</h1>
+
+<div class="container">
 
     <h2>Recensies</h2>
 
     <?php if (empty($recensies)): ?>
-        <p>Geen recensies gevonden.</p>
+        <p style="margin:20px;">Geen recensies gevonden.</p>
     <?php else: ?>
         <?php foreach ($recensies as $i): ?>
-            <div>
+            <div class="card">
                 <p><strong>Naam:</strong> <?= ($i['naam']) ?></p>
-                <p><strong>E‑mail:</strong> <?= ($i['email']) ?></p>
+                <p><strong>E-mail:</strong> <?= ($i['email']) ?></p>
                 <p><strong>Inhoud:</strong> <?= ($i['inhoud']) ?></p>
-                <p><strong>Conclusie:</strong> <?= $i['conclusie'] ?></p>
-                <!-- <p><strong>Stemmed:</strong> <?= implode(', ', $i['stemmed']) ?></p> -->
+                <p>
+                    <strong>Conclusie:</strong> 
+                    <span class="badge <?= strtolower($i['conclusie']) ?>">
+                        <?= $i['conclusie'] ?>
+                    </span>
+                </p>
                 <p><strong>Tokens:</strong> <?= implode(', ', $i['tokens']) ?></p>
-                <p><strong>woorden in zin:</strong> <?= ($i['aantal_tokens_in_zin']) ?></p>
-                <hr>
+                <p><strong>Woorden in zin:</strong> <?= ($i['aantal_tokens_in_zin']) ?></p>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
 
     <h2>Analyse per categorie</h2>
-    <?php foreach ($categorieStats as $cat => $a): ?>
-        <div>
-            
-            <h3><?= ($cat) ?></h3>
+
+    <div class="grid">
+        <?php foreach ($categorieStats as $cat => $a): ?>
+            <div class="card">
+                <h3><?= ($cat) ?></h3>
                 <p>Totaal: <?= $a["totaal"] ?></p>
                 <p>Positief: <?= $a["positief"] ?></p>
                 <p>Negatief: <?= $a["negatief"] ?></p>
 
-            <?php if ($a["negatief"] > $a["positief"]): ?>
-                <p>Verbeterpunt</p>
-            <?php else: ?>
-                <p>Sterk punt</p>
-            <?php endif; ?>
+                <?php if ($a["negatief"] > $a["positief"]): ?>
+                    <p class="badge negatief">Verbeterpunt</p>
+                <?php else: ?>
+                    <p class="badge positief">Sterk punt</p>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
 
-        </div>
-    <?php endforeach; ?>
     <hr>
 
     <h2>Meest voorkomende woorden (gestemd, zonder stopwoorden)</h2>
-    <?php if (!empty($recensies)): ?>
+
+    <?php if (!empty($stemmedTokens)): ?>
         <ul>
         <?php
-        $freq = array_count_values(['stemmed']);
+        $freq = array_count_values($stemmedTokens);
         arsort($freq);
         $i = 0;
         foreach ($freq as $woord => $aantal):
@@ -222,14 +301,20 @@ $alleStemmedWoorden = array_merge($alleStemmedWoorden, $stemmedTokens);
         <?php endforeach; ?>
         </ul>
     <?php else: ?>
-        <p>Geen woorden verzameld.</p>
+        <p style="margin:20px;">Geen woorden verzameld.</p>
     <?php endif; ?>
+
     <hr>
+
     <h2>Overzicht sentimenten</h2>
+
     <ul>
-        <li>Positief: <?= $sentimentCounts['positief'] ?></li>
-        <li>Negatief: <?= $sentimentCounts['negatief'] ?></li>
-        <li>Neutraal: <?= $sentimentCounts['neutraal'] ?></li>
+        <li><span class="badge positief">Positief: <?= $sentimentCounts['positief'] ?></span></li>
+        <li><span class="badge negatief">Negatief: <?= $sentimentCounts['negatief'] ?></span></li>
+        <li><span class="badge neutraal">Neutraal: <?= $sentimentCounts['neutraal'] ?></span></li>
     </ul>
+
+</div>
+
 </body>
 </html>

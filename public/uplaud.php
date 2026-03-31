@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
           }
           $file = fopen($_FILES['upload_csv']['tmp_name'], 'r');
 
-while (($row = fgetcsv($file, 1000, ",")) !== FALSE) {
+while (($row = fgetcsv($file, 1000, ";")) !== FALSE) {
     if (count($row) > 3) {
         $error .= "<li>Sorry, maximaal 3 kolommen toegestaan.</li>";
         break;
@@ -98,11 +98,86 @@ fclose($file);
 <head>
 <title>Demo Import CSV File Data into MySQL Database using PHP - AllPHPTricks.com</title>
 <link rel='stylesheet' href='css/style.css' type='text/css' media='all' />
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+}
+
+.wrapper {
+    width: 700px;
+    margin: 50px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+input[type="submit"] {
+    background-color: #1f2d3d;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #2c3e50;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+}
+
+.alert-success {
+    background-color: #d4edda;
+}
+
+.result-btn {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.result-btn a {
+    display: inline-block;
+    background-color: #2ecc71;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.result-btn a:hover {
+    background-color: #27ae60;
+}
+</style>
 </head>
 <body>
 
-<div style="width:700px; margin:50 auto;">
-<h1>Demo Import CSV File Data into MySQL Database using PHP</h1>
+<div class="wrapper">
+<h1>CSV uploaden en analyseren</h1>
 
 <?php
 if(!empty($error)){
@@ -122,6 +197,10 @@ if(!empty($success)){
 <br /><br />
 <input type="submit" value="Upload CSV Data"/>
 </form>
+
+<div class="result-btn">
+    <a href="test.php">Zie resultaten</a>
+</div>
 
 </div>
 </body>
