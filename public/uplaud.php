@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
           $file = fopen($_FILES['upload_csv']['tmp_name'], 'r');
 
 while (($row = fgetcsv($file, 1000, ";")) !== FALSE) {
-    if (count($row) > 3) {
+    if (count($row) > 4) {
         $error .= "<li>Sorry, maximaal 3 kolommen toegestaan.</li>";
         break;
     }
@@ -48,7 +48,7 @@ fclose($file);
     if(empty($error)){
 		// Include the database connection file 
 
-        $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
+        $mysqli = new mysqli("127.0.0.1", "user", "password", "Legedatabase_vnr");
         if ($mysqli->connect_error) {
             die("Connection failed: " . $mysqli->connect_error);
         }
@@ -250,7 +250,7 @@ if(!empty($success)){
 </form>
 
 <div class="result-btn">
-    <a href="test.php">Zie resultaten</a>
+    <a href="index_eindopdr.php">DEMO: zie resultaten</a>
 </div>
 
 </div>

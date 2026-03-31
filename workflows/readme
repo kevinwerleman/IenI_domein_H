@@ -1,3 +1,17 @@
+bericht voor van der veen:
+
+De gevulde demo database heet klantenberichten_CKT. Deze kan gebruikt worden om de Sentimentanalyse te testen en al het werk dat indexeindopdr doet.
+wanneer u de upload techniek wil testen kunt u een csv bestand oploaden via de uplaud.php pagina. Als u wil kunt u voor uw eigen overzicht de regel: 
+
+$mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
+naar ->
+$mysqli = new mysqli("127.0.0.1", "user", "password", "Legedatabase_vnr");
+veranderen in de bestanden index_eind opdracht en uplaud dit geeft u een leege database.
+
+wij leveren ook een csv bestand in dat bestand bevat 4 recensies. dit bestand kunt u gebruiken om het programa te testen.
+
+hieronder zijn een paar bronnen die gebruikt zijn tijdens het maken van de opdracht.
+
 de AI:
 https://github.com/yooper/php-text-analysis
 info over hoe de IA werkt:
@@ -27,53 +41,8 @@ Deprecated: Implicit conversion from float 1.3 to int loses precision in /worksp
 
 Deprecated: Implicit conversion from float 1.3 to int loses precision in /workspaces/IenI_domein_H/workflows/AI_NLM/vendor/yooper/php-text-analysis/src/Sentiment/Vader.php on line 136
 
-voorbeeld:
-$query = "SELECT Name, CountryCode FROM City ORDER BY ID DESC";
-
-$result = $mysqli->query($query);
-----
 
 database:
-KLANTENBERICHTEN EIND 
+klantenberichten_CKT.sql
 
 use TextAnalysis\Exceptions\InvalidParameterSizeException;
-
- /**
-     * An associative array that holds all the frequencies per token
-     * @var array 
-     */
-    protected $keyValues = array();
-
-    // tijmen dinf 
-
-    <!-- <html lang="nl">
-<head>  
- <style>
-    .titel {
-    font-size: 60px;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: darkblue;
-    color: white;
-    padding: 20px;
-    text-align: center;
-
-
-    }
-</style> 
-    
-
-    <meta charset="utf8">
-</head>
-<body>
-    <h1 class="titel"> InsightAI </h1>
-
-    <h3>InsightAI</h3>
-    <p> ik heb geen idee </p>
-    <img src="https://www.scholenmarktgroningen.nl/uploads/hero-1920/7c3a4cbb-6a84-5239-a043-26fd581ee602/3330568835/MJJ-20240617-Augustinus-151%20%282%29.jpg" alt="Beschrijving">
-    <!DOCTYPE html>
-<html> -->
-
-<!-- 
-<div class="balk"></div> -->
-
-    

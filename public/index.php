@@ -1,10 +1,5 @@
 <?php
-/*
 
-Dit is de startpagina, pas dit bestand niet aan of verwijder het niet!
-Als je zelf een website bouwt maak dan in dezelfde map 'public' een nieuwe map aan met de code van jouw website.
-
-*/
 ?>
 <!doctype html>
 <html lang="nl">
@@ -54,6 +49,9 @@ Als je zelf een website bouwt maak dan in dezelfde map 'public' een nieuwe map a
                         $ignored_files = [".", "..", "lesmateriaal"];
                         $found = false;
                         echo "<ul>";
+
+echo '<li><a title="Home" href="Homepagina.html"><strong>homepagina inside AI</strong></a></li>';
+
                         foreach ($files as $file) {
                             if (is_dir($file) && !in_array($file, $ignored_files)) {
                                 echo '<li><a title="' . $file . '" href="/' . $file . '" target="_blank"><strong>' . $file . '</strong></a></li>';

@@ -32,12 +32,11 @@ foreach ($stopwordsFiles as $file) {
 
 // katagorizeren
 $categorie = [
-    "bezorging" => ["bezorg", "lever", "verzend", "delivery", "shipping"],
-    "kwaliteit" => ["kwaliteit", "kapot", "defect", "broken"],
-    "service" => ["service", "klantenservice", "support", "help"],
-    "prijs" => ["prijs", "duur", "goedkoop", "expensive"]
+    "bezorging" => ["delivery", "shipping", "deliv"],
+    "kwaliteit" => ["broken", "perform", "work", "reliabl", "qualiti"],
+    "service"   => ["service", "support", "help", "servic", "respons"],
+    "prijs"     => ["expensive", "price", "cheap"]
 ];
-
 
 $categorieStats = [];
 foreach ($categorie as $cat => $woorden) {
@@ -56,7 +55,7 @@ class MyVader extends \TextAnalysis\Sentiment\Vader {
     }
 }
 
-$mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
+$mysqli = new mysqli("127.0.0.1", "user", "password", "Legedatabase_vnr");
 $result = $mysqli->query("SELECT * FROM recensies");
 
 
@@ -67,8 +66,8 @@ $sentimentCounts = [
     'neutraal' => 0
 ];
 
-$recensies = []; 
-$AlleStemmedWoorden = [];
+$recensies = [];
+$alleStemmedWoorden = [];
 $aantal_resensies = count($recensies); 
 
 
@@ -111,15 +110,18 @@ while ($row = $result->fetch_assoc()) {
 
     //stemmer 
 
-    
+$tokensWithoutStopwords = [];
     foreach ($tokens as $woord) {
         $woord = strtolower($woord);
         if (!in_array($woord, $stopwords)) {
-            $Alle_Tokens[] = $woord;
+            $tokensWithoutStopwords[] = $woord;
         }
     }
 
-$stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::class);
+    $stemmedTokens = stem($tokensWithoutStopwords, \TextAnalysis\Stemmers\SnowballStemmer::class);
+
+    $alleStemmedWoorden = array_merge($alleStemmedWoorden, $stemmedTokens);
+
 
    foreach ($categorie as $category => $woordenlijst) {
         foreach ($stemmedTokens as $woord) {
@@ -155,6 +157,13 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
         'hoeveelhijd_recensies' => $aantal_resensies, // aantaal geplaatste recensies.
     ];
 }
+
+$aantal_recensies = count($recensies);
+
+foreach ($recensies as &$rec) {
+    $rec['hoeveelhijd_recensies'] = $aantal_recensies;
+}
+unset($rec);
 ?>
 
 <!-- ------------------------------------corel aleen wat hieronder staat aanpassen wat hier boven staat mag je NIET aanraken AI gaat meschien zeuren over dat de html apart staat van php maar ik vind dit overzichtelijk------------- -->
@@ -235,35 +244,92 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
             border: none;
             border-top: 1px solid #ccc;
         }
+
+        /* NIEUW: grafiek stijl */
+        .chart-container {
+            margin-top: 10px;
+        }
+
+        .chart-bar {
+            height: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        .chart-pos { background-color: #2ecc71; }
+        .chart-neg { background-color: #e74c3c; }
+        .chart-neu { background-color: #000; }
+
+        .toggle-btn {
+            margin: 20px;
+            padding: 12px 20px;
+            background-color: #4da3ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .toggle-btn:hover {
+            background-color: #3b8edb;
+        }
     </style>
 </head>
 <body>
 
-<h1>Sentimentanalyse Dashboard</h1>
+<div class="menu">
+    <div class="menu-container">
+        <div class="logo">Insight AI</div>
+        <div class="links">
+            <a href="Homepagina.html">Home</a>
+            <a href="Functionaliteiten.html">Functionaliteiten</a>
+            <a href="uplaud.php">Upload</a>
+            <a href="Contact.html">Contact</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.menu {
+    background-color: #1e2a38;
+    padding: 15px 0;
+}
+
+.menu-container {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: 0.3s;
+    background-color: rgba(255,255,255,0.1);
+}
+
+.links a:hover {
+    background-color: #4da3ff;
+    color: white;
+    transform: translateY(-2px);
+}
+</style>
 
 <div class="container">
-
-    <h2>Recensies</h2>
-
-    <?php if (empty($recensies)): ?>
-        <p style="margin:20px;">Geen recensies gevonden.</p>
-    <?php else: ?>
-        <?php foreach ($recensies as $i): ?>
-            <div class="card">
-                <p><strong>Naam:</strong> <?= ($i['naam']) ?></p>
-                <p><strong>E-mail:</strong> <?= ($i['email']) ?></p>
-                <p><strong>Inhoud:</strong> <?= ($i['inhoud']) ?></p>
-                <p>
-                    <strong>Conclusie:</strong> 
-                    <span class="badge <?= strtolower($i['conclusie']) ?>">
-                        <?= $i['conclusie'] ?>
-                    </span>
-                </p>
-                <p><strong>Tokens:</strong> <?= implode(', ', $i['tokens']) ?></p>
-                <p><strong>Woorden in zin:</strong> <?= ($i['aantal_tokens_in_zin']) ?></p>
-            </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
 
     <h2>Analyse per categorie</h2>
 
@@ -271,9 +337,9 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
         <?php foreach ($categorieStats as $cat => $a): ?>
             <div class="card">
                 <h3><?= ($cat) ?></h3>
-                <p>Totaal: <?= $a["totaal"] ?></p>
                 <p>Positief: <?= $a["positief"] ?></p>
                 <p>Negatief: <?= $a["negatief"] ?></p>
+                <p>Neutraal: <?= $a["totaal"] - $a["positief"] - $a["negatief"] ?></p>
 
                 <?php if ($a["negatief"] > $a["positief"]): ?>
                     <p class="badge negatief">Verbeterpunt</p>
@@ -286,26 +352,6 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
 
     <hr>
 
-    <h2>Meest voorkomende woorden (gestemd, zonder stopwoorden)</h2>
-
-    <?php if (!empty($stemmedTokens)): ?>
-        <ul>
-        <?php
-        $freq = array_count_values($stemmedTokens);
-        arsort($freq);
-        $i = 0;
-        foreach ($freq as $woord => $aantal):
-            if (++$i > 20) break;
-        ?>
-            <li><?= ($woord) ?>: <?= $aantal ?> keer</li>
-        <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p style="margin:20px;">Geen woorden verzameld.</p>
-    <?php endif; ?>
-
-    <hr>
-
     <h2>Overzicht sentimenten</h2>
 
     <ul>
@@ -314,7 +360,85 @@ $stemmedTokens = stem($Alle_Tokens, \TextAnalysis\Stemmers\SnowballStemmer::clas
         <li><span class="badge neutraal">Neutraal: <?= $sentimentCounts['neutraal'] ?></span></li>
     </ul>
 
+    <hr>
+
+    <button class="toggle-btn" onclick="toggleRecensies()">Toon recensies</button>
+
+    <div id="recensies-blok" style="display:none;">
+
+        <h2>Recensies</h2>
+
+        <?php if (empty($recensies)): ?>
+            <p style="margin:20px;">Geen recensies gevonden.</p>
+        <?php else: ?>
+            <?php foreach ($recensies as $i): ?>
+                <div class="card">
+                    <p><strong>Naam:</strong> <?= ($i['naam']) ?></p>
+                    <p><strong>E-mail:</strong> <?= ($i['email']) ?></p>
+                    <p><strong>Inhoud:</strong> <?= ($i['inhoud']) ?></p>
+                    <p>
+                        <strong>Conclusie:</strong> 
+                        <span class="badge <?= strtolower($i['conclusie']) ?>">
+                            <?= $i['conclusie'] ?>
+                        </span>
+                    </p>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+    </div>
+
 </div>
+
+<script>
+// toggle recensies
+function toggleRecensies() {
+    var blok = document.getElementById("recensies-blok");
+    if (blok.style.display === "none") {
+        blok.style.display = "block";
+    } else {
+        blok.style.display = "none";
+    }
+}
+
+// automatische grafieken genereren
+document.querySelectorAll(".grid .card").forEach(card => {
+
+    let tekst = card.innerText;
+
+    let pos = parseInt((tekst.match(/Positief:\s*(\d+)/) || [])[1]) || 0;
+    let neg = parseInt((tekst.match(/Negatief:\s*(\d+)/) || [])[1]) || 0;
+    let neu = parseInt((tekst.match(/Neutraal:\s*(\d+)/) || [])[1]) || 0;
+
+    let totaal = pos + neg + neu;
+    if (totaal === 0) return;
+
+    let posP = (pos / totaal) * 100;
+    let negP = (neg / totaal) * 100;
+    let neuP = (neu / totaal) * 100;
+
+    let container = document.createElement("div");
+    container.className = "chart-container";
+
+    let barPos = document.createElement("div");
+    barPos.className = "chart-bar chart-pos";
+    barPos.style.width = posP + "%";
+
+    let barNeg = document.createElement("div");
+    barNeg.className = "chart-bar chart-neg";
+    barNeg.style.width = negP + "%";
+
+    let barNeu = document.createElement("div");
+    barNeu.className = "chart-bar chart-neu";
+    barNeu.style.width = neuP + "%";
+
+    container.appendChild(barPos);
+    container.appendChild(barNeg);
+    container.appendChild(barNeu);
+
+    card.appendChild(container);
+});
+</script>
 
 </body>
 </html>
