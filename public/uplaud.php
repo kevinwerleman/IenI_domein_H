@@ -48,7 +48,7 @@ fclose($file);
     if(empty($error)){
 		// Include the database connection file 
 
-        $mysqli = new mysqli("127.0.0.1", "user", "password", "Legedatabase_vnr");
+        $mysqli = new mysqli("127.0.0.1", "user", "password", "klantenberichten_CKT");
         if ($mysqli->connect_error) {
             die("Connection failed: " . $mysqli->connect_error);
         }
